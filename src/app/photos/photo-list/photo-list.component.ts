@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
+import { Subject } from 'rxjs';
+import { debounceTime }  from 'rxjs/operators';
 import { Photo } from '../photo/photo';
-import { PhotoService } from '../photo/photo.service';
 
 
 @Component({
@@ -12,22 +12,20 @@ import { PhotoService } from '../photo/photo.service';
 })
 export class PhotoListComponent implements OnInit {
 
-  photos:Photo[] = []
+  photos:Photo[] = [];
+  filter: string = '';
+  debounce: Subject<string> = new Subject<string>();
 
-  constructor(
-    private photoService: PhotoService,
-    private activatedRoute: ActivatedRoute // representa a rota ativa no momento atual
-  ) {}
+  constructor(private activatedRoute: ActivatedRoute) {} // representa a rota ativa no momento atual
   
   ngOnInit(): void {   
-    const userName = this.activatedRoute.snapshot.params.userName;
-    this.photoService.listFromUser(userName)
-      .subscribe(
-        photos => {
-          console.log(photos[0].url);
-          return this.photos = photos
-        },        
-        err => console.log(err.messag) 
-      );  
+    this.photos = this.activatedRoute.snapshot.data['photos'];
+    this.debounce
+      .pipe(debounceTime(300))
+      .subscribe( filter => this.filter = filter)
+  }
+
+  ngOnDestroy() {
+    this.debounce.unsubscribe();
   }
 }
