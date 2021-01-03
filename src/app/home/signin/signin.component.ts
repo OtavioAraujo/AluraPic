@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { PlatformDetectorService } from 'src/app/core/platform-detector/platform-detector.service';
 
 @Component({
     templateUrl: './signin.component.html'
@@ -14,7 +15,8 @@ export class SigninComponent implements OnInit{
     constructor(
         private formBuilder: FormBuilder,
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private platformDetectorService: PlatformDetectorService
     ) {}
 
     ngOnInit(): void {        
@@ -38,7 +40,8 @@ export class SigninComponent implements OnInit{
             err => {
                 console.log(err);
                 this.loginForm.reset();
-                this.userNameinput.nativeElement.focus();
+                this.platformDetectorService.isPlatformBrowser() &&
+                    this.userNameinput.nativeElement.focus();
                 alert('Invalid user name or password');
             }
         )
