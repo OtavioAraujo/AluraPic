@@ -14,7 +14,6 @@ import { SignupComponent } from './signup/signup.component';
     ],
     imports: [
         CommonModule,
-        FormsModule,
         ReactiveFormsModule,
         VMessageModule,
         RouterModule
